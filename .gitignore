@@ -1,0 +1,36 @@
+# Spec Kit: estado local (el resto de .specify sí se versiona)
+# Cubierto además por .specify/.gitignore
+
+# Cursor: solo skills de Spec Kit
+.cursor/*
+!.cursor/skills/
+.cursor/skills/*
+!.cursor/skills/speckit-*/
+
+# OpenCode: solo comandos de Spec Kit
+.opencode/*
+!.opencode/commands/
+.opencode/commands/*
+!.opencode/commands/speckit.*
+
+.env
+.env.*
+!.env.example
+
+*.pem
+*.key
+id_rsa
+id_rsa.pub
+credentials.json
+
+node_modules/
+.next/
+out/
+dist/
+bin/
+tmp/
+coverage/
+*.exe
+*.test
+.DS_Store
+Thumbs.db
