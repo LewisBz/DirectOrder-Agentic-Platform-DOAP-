@@ -57,7 +57,9 @@ curl http://localhost:8080/v1/tenants/current/by-slug/demo-a
 
 ## Vitrina
 
-Abre `http://demo-a.localhost:3000` o `http://localhost:3000/t/demo-a`. Debe mostrar el nombre del comercio. No hay service worker que cachee auth ni reenvíe pedidos.
+Abre `http://localhost:3000/t/demo-a` (o `http://demo-a.localhost:3000` si añadiste hosts). Debe mostrar el nombre del comercio. `http://localhost:3000` sin host de demo muestra el aviso de host desconocido: no hay catálogo, carrito ni login en este esqueleto.
+
+El log de Next `Local: http://<id>:3000` es el hostname interno del contenedor. En el navegador del host usa `http://localhost:3000`. `migrate` en `Exited` es correcto: aplica schema/seed y termina. En Compose, Next llama a la API con `API_INTERNAL_URL=http://api:8080` (no `localhost` dentro de `web`). Recrea `web` si cambias esa variable.
 
 ## Aislamiento
 
