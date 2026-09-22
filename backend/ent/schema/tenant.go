@@ -32,6 +32,9 @@ func (Tenant) Fields() []ent.Field {
 func (Tenant) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("canaries", IsolationCanary.Type),
+		edge.To("staff", Staff.Type),
+		edge.To("refresh_tokens", StaffRefreshToken.Type),
+		edge.To("guest_sessions", GuestSession.Type),
 	}
 }
 

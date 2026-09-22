@@ -1,1 +1,1 @@
-Fuera de alcance en 001-monolith-scaffold. Ver docs/especificacion-y-arquitectura.md.
+Paquete `auth`: staff (JWT) y sesión de invitado. Las rutas se montan en la API; este corte de fundación deja schema, rate limit y middleware listos. Login y CRUD llegan en las historias de `002-staff-auth`.
