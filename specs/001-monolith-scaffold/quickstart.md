@@ -11,10 +11,11 @@ Prueba el esqueleto local. No implementa pedidos ni login.
 
 ```powershell
 copy .env.example .env
+git check-ignore -v .env
 docker compose up --build
 ```
 
-Espera a que `migrate` termine, `api` pase `/readyz` y `web` sirva `/`.
+`git check-ignore` debe mencionar `.gitignore`. Espera a que `migrate` termine, `api` pase `/readyz` y `web` sirva `/`.
 
 ## Señales de vida
 
@@ -26,6 +27,12 @@ curl http://localhost:8080/readyz
 Ambos deben devolver `{"status":"ok"}`.
 
 ## Comercio por host (autoridad)
+
+En `C:\Windows\System32\drivers\etc\hosts` (como administrador):
+
+```text
+127.0.0.1 demo-a.localhost demo-b.localhost
+```
 
 ```powershell
 curl -H "Host: demo-a.localhost" http://localhost:8080/v1/tenants/current
@@ -50,7 +57,7 @@ curl http://localhost:8080/v1/tenants/current/by-slug/demo-a
 
 ## Vitrina
 
-Abre `http://demo-a.localhost:3000` (añade `127.0.0.1 demo-a.localhost demo-b.localhost` en `hosts` si hace falta) o `http://localhost:3000/t/demo-a`. Debe mostrar el nombre del comercio actual.
+Abre `http://demo-a.localhost:3000` o `http://localhost:3000/t/demo-a`. Debe mostrar el nombre del comercio. No hay service worker que cachee auth ni reenvíe pedidos.
 
 ## Aislamiento
 
@@ -61,14 +68,18 @@ cd backend
 go test ./...
 ```
 
+Con Compose arriba, `TestIsolation*` usa `doap_app` en localhost:5432. Contexto A no lee ni actualiza canarios de B. Sin `app.tenant_id`, `isolation_canaries` devuelve 0 filas. El rol de la API no es dueño de las tablas.
+
 ## Recrear
 
 ```powershell
 docker compose down -v
 docker compose up --build
+curl -H "Host: demo-a.localhost" http://localhost:8080/v1/tenants/current
+curl -H "Host: demo-b.localhost" http://localhost:8080/v1/tenants/current
 ```
 
-Semilla otra vez: dos comercios y `/readyz` ok.
+Semilla otra vez: Demo A, Demo B, `/readyz` ok, un canario `seed` por comercio.
 
 ## Secretos
 

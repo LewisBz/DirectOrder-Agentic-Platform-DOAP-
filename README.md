@@ -10,6 +10,7 @@ Requisitos: Docker Compose v2. Puertos 5432, 8080 y 3000.
 
 ```powershell
 copy .env.example .env
+git check-ignore -v .env
 docker compose up --build
 ```
 
@@ -20,9 +21,17 @@ curl http://localhost:8080/healthz
 curl http://localhost:8080/readyz
 ```
 
-Ambos deben devolver `{"status":"ok"}`. La vitrina está en `http://localhost:3000`.
+Ambos deben devolver `{"status":"ok"}`.
 
-Los tests de Go se corren **en el host** (la imagen `api` es distroless y no trae el compilador):
+Para ver comercios por host, añade en el archivo `hosts` de Windows:
+
+```text
+127.0.0.1 demo-a.localhost demo-b.localhost
+```
+
+Luego `http://demo-a.localhost:3000` o `http://localhost:3000/t/demo-a`.
+
+Los tests de Go (incluido RLS) se corren **en el host**:
 
 ```powershell
 cd backend

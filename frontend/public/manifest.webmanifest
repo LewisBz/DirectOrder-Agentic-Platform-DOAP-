@@ -1,0 +1,9 @@
+{
+  "name": "DOAP",
+  "short_name": "DOAP",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafafa",
+  "theme_color": "#18181b",
+  "icons": []
+}

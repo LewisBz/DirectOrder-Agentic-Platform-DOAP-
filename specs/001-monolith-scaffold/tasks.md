@@ -119,13 +119,13 @@ description: "Task list for 001-monolith-scaffold"
 
 ### Tests for User Story 4
 
-- [ ] T025 [US4] Write failing-then-passing isolation tests in `backend/internal/tenant/isolation_test.go`: as `doap_app`, SET LOCAL A, SELECT/UPDATE canary B yields 0 rows; missing setting yields 0 business rows
+- [x] T025 [US4] Write failing-then-passing isolation tests in `backend/internal/tenant/isolation_test.go`: as `doap_app`, SET LOCAL A, SELECT/UPDATE canary B yields 0 rows; missing setting yields 0 business rows
 
 ### Implementation for User Story 4
 
-- [ ] T026 [US4] Seed one `isolation_canaries` row per demo tenant in `backend/migrations/`
-- [ ] T027 [US4] Verify Atlas SQL uses FORCE RLS and GRANTs only to `doap_app` (not table owner as API user) in `backend/migrations/` and document the future-table policy template in `backend/migrations/README.md`
-- [ ] T028 [US4] Run recreate path `docker compose down -v` && `up` and record expected seed in [quickstart.md](./quickstart.md)
+- [x] T026 [US4] Seed one `isolation_canaries` row per demo tenant in `backend/migrations/`
+- [x] T027 [US4] Verify Atlas SQL uses FORCE RLS and GRANTs only to `doap_app` (not table owner as API user) in `backend/migrations/` and document the future-table policy template in `backend/migrations/README.md`
+- [x] T028 [US4] Run recreate path `docker compose down -v` && `up` and record expected seed in [quickstart.md](./quickstart.md)
 
 **Checkpoint**: SC-002 y SC-004
 
@@ -135,9 +135,9 @@ description: "Task list for 001-monolith-scaffold"
 
 **Purpose**: Alinear docs, lints y validación del quickstart
 
-- [ ] T029 [P] Align `README.md` with [quickstart.md](./quickstart.md) (hosts file note for `demo-a.localhost`)
-- [ ] T030 [P] Add `frontend/public/manifest.webmanifest` stub (no caching authenticated responses; no SW that replays orders)
-- [ ] T031 Run `go test ./...` in `backend/` and `npx tsc --noEmit` in `frontend/`
+- [x] T029 [P] Align `README.md` with [quickstart.md](./quickstart.md) (hosts file note for `demo-a.localhost`)
+- [x] T030 [P] Add `frontend/public/manifest.webmanifest` stub (no caching authenticated responses; no SW that replays orders)
+- [x] T031 Run `go test ./...` in `backend/` and `npx tsc --noEmit` in `frontend/`
 - [ ] T032 Execute [quickstart.md](./quickstart.md) end-to-end on Compose and fix gaps
 
 ---

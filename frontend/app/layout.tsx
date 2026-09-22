@@ -4,6 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "DOAP",
   description: "DirectOrder Agentic Platform",
+  manifest: "/manifest.webmanifest",
 };
 
 export default function RootLayout({
