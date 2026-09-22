@@ -7,12 +7,14 @@ import (
 )
 
 type Config struct {
-	APIAddr            string
-	PostgresHost       string
-	PostgresPort       string
-	PostgresDB         string
-	PostgresAppUser    string
+	APIAddr             string
+	PostgresHost        string
+	PostgresPort        string
+	PostgresDB          string
+	PostgresAppUser     string
 	PostgresAppPassword string
+	AuthJWTSecret       string
+	CORSOrigin          string
 }
 
 func Load() (Config, error) {
@@ -24,9 +26,17 @@ func Load() (Config, error) {
 		PostgresDB:          require("POSTGRES_DB", &missing),
 		PostgresAppUser:     require("POSTGRES_APP_USER", &missing),
 		PostgresAppPassword: require("POSTGRES_APP_PASSWORD", &missing),
+		AuthJWTSecret:       require("AUTH_JWT_SECRET", &missing),
+		CORSOrigin:          os.Getenv("CORS_ORIGIN"),
+	}
+	if cfg.CORSOrigin == "" {
+		cfg.CORSOrigin = "http://localhost:3000"
 	}
 	if len(missing) > 0 {
 		return Config{}, fmt.Errorf("missing required env: %s", strings.Join(missing, ", "))
+	}
+	if len(cfg.AuthJWTSecret) < 32 {
+		return Config{}, fmt.Errorf("missing required env: AUTH_JWT_SECRET (must be at least 32 characters)")
 	}
 	return cfg, nil
 }

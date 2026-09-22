@@ -20,6 +20,18 @@ func TenantNotFound(w http.ResponseWriter) {
 	WriteError(w, http.StatusNotFound, "tenant_not_found", "unknown host or slug")
 }
 
+func InvalidCredentials(w http.ResponseWriter) {
+	WriteError(w, http.StatusUnauthorized, "invalid_credentials", "invalid email or password")
+}
+
+func Forbidden(w http.ResponseWriter) {
+	WriteError(w, http.StatusForbidden, "forbidden", "not allowed")
+}
+
+func RateLimited(w http.ResponseWriter) {
+	WriteError(w, http.StatusTooManyRequests, "rate_limited", "invalid email or password")
+}
+
 func ValidationError(w http.ResponseWriter, message string) {
 	WriteError(w, http.StatusBadRequest, "validation_error", message)
 }

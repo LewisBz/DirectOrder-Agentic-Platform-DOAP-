@@ -1,0 +1,445 @@
+openapi: 3.1.0
+info:
+  title: DOAP API — auth
+  version: 0.2.0
+  description: >
+    Staff login, CRUD de caja/cocina, sesión de invitado. El comercio se
+    resuelve por Host o X-Forwarded-Host. X-Tenant-Id se ignora.
+servers:
+  - url: http://localhost:8080
+paths:
+  /v1/auth/login:
+    post:
+      operationId: loginStaff
+      summary: Acceso de staff en el comercio del Host
+      parameters:
+        - $ref: "#/components/parameters/Host"
+        - $ref: "#/components/parameters/XForwardedHost"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Tokens emitidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenPair"
+        "401":
+          description: Credenciales inválidas, inactivo o comercio desconocido (mensaje genérico)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: Tope de intentos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/auth/refresh:
+    post:
+      operationId: refreshStaff
+      summary: Rotar refresh; el valor anterior deja de servir
+      parameters:
+        - $ref: "#/components/parameters/Host"
+        - $ref: "#/components/parameters/XForwardedHost"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshRequest"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenPair"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/auth/logout:
+    post:
+      operationId: logoutStaff
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Host"
+        - $ref: "#/components/parameters/XForwardedHost"
+      responses:
+        "204":
+          description: Refresh de esta persona revocados
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/auth/me:
+    get:
+      operationId: getStaffMe
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Host"
+        - $ref: "#/components/parameters/XForwardedHost"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffPublic"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/staff:
+    get:
+      operationId: listStaff
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Host"
+        - $ref: "#/components/parameters/XForwardedHost"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StaffPublic"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: No es owner
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      operationId: createStaff
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Host"
+        - $ref: "#/components/parameters/XForwardedHost"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StaffCreate"
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffPublic"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: Email ya usado en el comercio
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Rol owner u validación
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/staff/{id}:
+    patch:
+      operationId: updateStaff
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Host"
+        - $ref: "#/components/parameters/XForwardedHost"
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StaffPatch"
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StaffPublic"
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/staff/{id}/deactivate:
+    post:
+      operationId: deactivateStaff
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Host"
+        - $ref: "#/components/parameters/XForwardedHost"
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Baja lógica; refresh revocados
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: Intento sobre owner
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/staff/{id}/reactivate:
+    post:
+      operationId: reactivateStaff
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: "#/components/parameters/Host"
+        - $ref: "#/components/parameters/XForwardedHost"
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Vuelve a poder iniciar sesión
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/guest/sessions:
+    post:
+      operationId: ensureGuestSession
+      summary: Idempotente; reutiliza token válido del mismo comercio
+      parameters:
+        - $ref: "#/components/parameters/Host"
+        - $ref: "#/components/parameters/XForwardedHost"
+        - name: X-Guest-Token
+          in: header
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GuestEnsure"
+      responses:
+        "200":
+          description: Sesión existente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuestSession"
+        "201":
+          description: Sesión nueva
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuestSession"
+        "404":
+          description: Comercio desconocido; no se emite invitado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    Host:
+      name: Host
+      in: header
+      required: true
+      schema:
+        type: string
+    XForwardedHost:
+      name: X-Forwarded-Host
+      in: header
+      required: false
+      schema:
+        type: string
+  schemas:
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 1
+    RefreshRequest:
+      type: object
+      required: [refresh_token]
+      properties:
+        refresh_token:
+          type: string
+    TokenPair:
+      type: object
+      required: [access_token, refresh_token, expires_in, token_type]
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        expires_in:
+          type: integer
+          description: Segundos de vida del access (900)
+        token_type:
+          type: string
+          enum: [Bearer]
+    StaffPublic:
+      type: object
+      required: [id, email, name, role, active, tenant_slug, tenant_name]
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+        name:
+          type: string
+        role:
+          $ref: "#/components/schemas/StaffRole"
+        active:
+          type: boolean
+        tenant_slug:
+          type: string
+        tenant_name:
+          type: string
+    StaffRole:
+      type: string
+      enum: [owner, cashier, kitchen]
+    StaffCreate:
+      type: object
+      required: [email, password, name, role]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+        name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        role:
+          type: string
+          enum: [cashier, kitchen]
+    StaffPatch:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        password:
+          type: string
+          minLength: 8
+          description: Omitir para no cambiar
+        role:
+          type: string
+          enum: [cashier, kitchen]
+    GuestEnsure:
+      type: object
+      properties:
+        channel:
+          type: string
+          enum: [pwa]
+          default: pwa
+        token:
+          type: string
+          description: Cookie previa si no va en X-Guest-Token
+    GuestSession:
+      type: object
+      required: [token, tenant_slug, channel]
+      properties:
+        token:
+          type: string
+          description: Opaco; el cliente lo guarda; no es JWT de staff
+        tenant_slug:
+          type: string
+        channel:
+          type: string
+    Error:
+      type: object
+      required: [error, message]
+      properties:
+        error:
+          type: string
+        message:
+          type: string

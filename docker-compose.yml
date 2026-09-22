@@ -29,6 +29,7 @@ services:
       POSTGRES_OWNER_PASSWORD: ${POSTGRES_OWNER_PASSWORD:-changeme_owner}
       POSTGRES_APP_USER: ${POSTGRES_APP_USER:-doap_app}
       POSTGRES_APP_PASSWORD: ${POSTGRES_APP_PASSWORD:-changeme_app}
+      STAFF_SEED_PASSWORD: ${STAFF_SEED_PASSWORD:-changeme_staff}
     volumes:
       - ./backend/migrations:/migrations:ro
     entrypoint: ["bash", "/migrations/apply.sh"]
@@ -46,6 +47,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-doap}
       POSTGRES_APP_USER: ${POSTGRES_APP_USER:-doap_app}
       POSTGRES_APP_PASSWORD: ${POSTGRES_APP_PASSWORD:-changeme_app}
+      AUTH_JWT_SECRET: ${AUTH_JWT_SECRET:-changeme_jwt_secret_do_not_use_prod_xx}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
     ports:
       - "8080:8080"
 
