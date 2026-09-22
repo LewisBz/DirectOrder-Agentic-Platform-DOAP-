@@ -1,0 +1,75 @@
+# Quickstart: 001-monolith-scaffold
+
+Prueba el esqueleto local. No implementa pedidos ni login.
+
+## Prerrequisitos
+
+- Docker Compose v2
+- Puerto 5432, 8080 y 3000 libres (o ajusta `.env`)
+
+## Arranque
+
+```powershell
+copy .env.example .env
+docker compose up --build
+```
+
+Espera a que `migrate` termine, `api` pase `/readyz` y `web` sirva `/`.
+
+## Señales de vida
+
+```powershell
+curl http://localhost:8080/healthz
+curl http://localhost:8080/readyz
+```
+
+Ambos deben devolver `{"status":"ok"}`.
+
+## Comercio por host (autoridad)
+
+```powershell
+curl -H "Host: demo-a.localhost" http://localhost:8080/v1/tenants/current
+curl -H "Host: demo-b.localhost" http://localhost:8080/v1/tenants/current
+```
+
+Cada respuesta trae `slug` `demo-a` o `demo-b`, `currency` COP, `tax_name` IVA, `timezone` America/Bogota.
+
+## El id inventado no manda
+
+```powershell
+curl -H "Host: demo-a.localhost" -H "X-Tenant-Id: 00000000-0000-0000-0000-000000000099" http://localhost:8080/v1/tenants/current
+```
+
+Sigue siendo Demo A. Host desconocido → 404 `tenant_not_found`.
+
+## Fallback por slug
+
+```powershell
+curl http://localhost:8080/v1/tenants/current/by-slug/demo-a
+```
+
+## Vitrina
+
+Abre `http://demo-a.localhost:3000` (añade `127.0.0.1 demo-a.localhost demo-b.localhost` en `hosts` si hace falta) o `http://localhost:3000/t/demo-a`. Debe mostrar el nombre del comercio actual.
+
+## Aislamiento
+
+Desde el **host** (la imagen `api` es distroless; no ejecuta `go test`):
+
+```powershell
+cd backend
+go test ./...
+```
+
+## Recrear
+
+```powershell
+docker compose down -v
+docker compose up --build
+```
+
+Semilla otra vez: dos comercios y `/readyz` ok.
+
+## Secretos
+
+`.env` no se commitea. Si falta una variable obligatoria, `api` no arranca y el log nombra la clave. Contrato: [contracts/openapi.yaml](contracts/openapi.yaml). Modelo: [data-model.md](data-model.md).

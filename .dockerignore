@@ -1,0 +1,16 @@
+.git
+.cursor
+.opencode
+.specify
+*.md
+!README.md
+.env
+.env.*
+!.env.example
+node_modules
+.next
+frontend/node_modules
+backend/vendor
+**/*_test.go
+coverage
+*.log

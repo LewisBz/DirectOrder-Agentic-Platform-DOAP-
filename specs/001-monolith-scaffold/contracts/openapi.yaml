@@ -1,0 +1,139 @@
+openapi: 3.1.0
+info:
+  title: DOAP API
+  version: 0.1.0
+  description: >
+    Contrato del esqueleto multi-tenant. Auth, catálogo, carrito, pedidos,
+    pagos y agente no existen en este corte.
+servers:
+  - url: http://localhost:8080
+paths:
+  /healthz:
+    get:
+      operationId: getHealthz
+      summary: Proceso vivo, sin tocar la base
+      responses:
+        "200":
+          description: Vivo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Health"
+  /readyz:
+    get:
+      operationId: getReadyz
+      summary: Listo para tráfico (base alcanzable)
+      responses:
+        "200":
+          description: Listo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Health"
+        "503":
+          description: Base no alcanzable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Health"
+  /v1/tenants/current:
+    get:
+      operationId: getCurrentTenant
+      summary: Comercio resuelto por Host o slug de ruta
+      parameters:
+        - name: Host
+          in: header
+          required: true
+          schema:
+            type: string
+        - name: X-Forwarded-Host
+          in: header
+          required: false
+          schema:
+            type: string
+          description: Gana sobre Host si el proxy lo envía
+        - name: X-Tenant-Id
+          in: header
+          required: false
+          schema:
+            type: string
+          description: MUST ser ignorado como autoridad
+      responses:
+        "200":
+          description: Comercio activo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantPublic"
+        "404":
+          description: Host o slug desconocido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /v1/tenants/current/by-slug/{slug}:
+    get:
+      operationId: getCurrentTenantBySlug
+      summary: Fallback cuando no hay host de comercio (ruta /t/{slug} en vitrina)
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Comercio
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TenantPublic"
+        "404":
+          description: Slug desconocido
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Health:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [ok, not_ready]
+    TenantPublic:
+      type: object
+      required: [id, slug, host, name, currency, tax_name, timezone]
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+        host:
+          type: string
+        name:
+          type: string
+        currency:
+          type: string
+          example: COP
+        tax_name:
+          type: string
+          example: IVA
+        timezone:
+          type: string
+          example: America/Bogota
+        opening_hours:
+          type: object
+          additionalProperties: true
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+          enum: [tenant_not_found, validation_error]
+        message:
+          type: string

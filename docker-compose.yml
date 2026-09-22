@@ -1,0 +1,65 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme_postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-doap}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-doap}"]
+      interval: 2s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - doap_pg:/var/lib/postgresql/data
+
+  migrate:
+    image: postgres:16
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme_postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-doap}
+      POSTGRES_OWNER_USER: ${POSTGRES_OWNER_USER:-doap_owner}
+      POSTGRES_OWNER_PASSWORD: ${POSTGRES_OWNER_PASSWORD:-changeme_owner}
+      POSTGRES_APP_USER: ${POSTGRES_APP_USER:-doap_app}
+      POSTGRES_APP_PASSWORD: ${POSTGRES_APP_PASSWORD:-changeme_app}
+    volumes:
+      - ./backend/migrations:/migrations:ro
+    entrypoint: ["bash", "/migrations/apply.sh"]
+
+  api:
+    build:
+      context: ./backend
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    environment:
+      API_ADDR: ${API_ADDR:-:8080}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_DB: ${POSTGRES_DB:-doap}
+      POSTGRES_APP_USER: ${POSTGRES_APP_USER:-doap_app}
+      POSTGRES_APP_PASSWORD: ${POSTGRES_APP_PASSWORD:-changeme_app}
+    ports:
+      - "8080:8080"
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080}
+    depends_on:
+      - api
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080}
+
+volumes:
+  doap_pg:

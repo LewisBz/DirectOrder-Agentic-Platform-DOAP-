@@ -30,7 +30,10 @@ dist/
 bin/
 tmp/
 coverage/
+vendor/
 *.exe
 *.test
+*.out
+*.log
 .DS_Store
 Thumbs.db
