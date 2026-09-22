@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
+import { apiBaseURL } from "@/lib/api";
 
-const apiURL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+const apiURL = apiBaseURL();
 
 type TenantPublic = {
   name: string;
