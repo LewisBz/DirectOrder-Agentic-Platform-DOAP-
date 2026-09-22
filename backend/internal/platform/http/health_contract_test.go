@@ -10,7 +10,7 @@ import (
 )
 
 func TestHealthzContract(t *testing.T) {
-	r := NewRouter(&database.DB{})
+	r := NewRouter(&database.DB{}, nil)
 	req := httptest.NewRequest(http.MethodGet, "/healthz", nil)
 	rec := httptest.NewRecorder()
 	r.ServeHTTP(rec, req)
@@ -27,7 +27,7 @@ func TestHealthzContract(t *testing.T) {
 }
 
 func TestReadyzNotReadyWithoutPool(t *testing.T) {
-	r := NewRouter(&database.DB{})
+	r := NewRouter(&database.DB{}, nil)
 	req := httptest.NewRequest(http.MethodGet, "/readyz", nil)
 	rec := httptest.NewRecorder()
 	r.ServeHTTP(rec, req)
@@ -44,7 +44,7 @@ func TestReadyzNotReadyWithoutPool(t *testing.T) {
 }
 
 func TestXTenantIdIsNotAuthorityOnHealthz(t *testing.T) {
-	r := NewRouter(&database.DB{})
+	r := NewRouter(&database.DB{}, nil)
 	req := httptest.NewRequest(http.MethodGet, "/healthz", nil)
 	req.Header.Set("X-Tenant-Id", "00000000-0000-0000-0000-000000000099")
 	rec := httptest.NewRecorder()

@@ -9,7 +9,7 @@ import (
 )
 
 func TestNoOrderCartPaymentAgentRoutes(t *testing.T) {
-	r := NewRouter(&database.DB{})
+	r := NewRouter(&database.DB{}, nil)
 	for _, path := range []string{"/v1/orders", "/v1/cart", "/v1/payments", "/v1/agent"} {
 		req := httptest.NewRequest(http.MethodGet, path, nil)
 		rec := httptest.NewRecorder()

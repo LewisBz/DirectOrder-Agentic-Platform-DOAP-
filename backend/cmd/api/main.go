@@ -12,6 +12,7 @@ import (
 	"github.com/LewisBz/DirectOrder-Agentic-Platform-DOAP-/internal/platform/config"
 	"github.com/LewisBz/DirectOrder-Agentic-Platform-DOAP-/internal/platform/database"
 	plathttp "github.com/LewisBz/DirectOrder-Agentic-Platform-DOAP-/internal/platform/http"
+	"github.com/LewisBz/DirectOrder-Agentic-Platform-DOAP-/internal/tenant"
 )
 
 func main() {
@@ -31,7 +32,7 @@ func main() {
 
 	srv := &http.Server{
 		Addr:              cfg.APIAddr,
-		Handler:           plathttp.NewRouter(db),
+		Handler:           plathttp.NewRouter(db, tenant.NewStore(db)),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 

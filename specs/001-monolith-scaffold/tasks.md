@@ -82,14 +82,14 @@ description: "Task list for 001-monolith-scaffold"
 
 ### Tests for User Story 2
 
-- [ ] T017 [P] [US2] Add contract tests for `GET /v1/tenants/current` (Host, X-Forwarded-Host, ignored X-Tenant-Id, 404) and `GET /v1/tenants/current/by-slug/{slug}` in `backend/internal/tenant/http_contract_test.go`
+- [x] T017 [P] [US2] Add contract tests for `GET /v1/tenants/current` (Host, X-Forwarded-Host, ignored X-Tenant-Id, 404) and `GET /v1/tenants/current/by-slug/{slug}` in `backend/internal/tenant/http_contract_test.go`
 
 ### Implementation for User Story 2
 
-- [ ] T018 [US2] Implement `resolve_tenant` usage and Host-then-slug middleware in `backend/internal/platform/middleware/tenant.go` (host stripped of port; host wins over slug)
-- [ ] T019 [US2] Implement tenant handlers returning `TenantPublic` in `backend/internal/tenant/http.go` for `/v1/tenants/current` and `/v1/tenants/current/by-slug/{slug}`
-- [ ] T020 [US2] Add idempotent seed of demo-a (`demo-a.localhost`) and demo-b (`demo-b.localhost`) with COP/IVA/`America/Bogota` in `backend/migrations/`
-- [ ] T021 [US2] Show current commerce name on `frontend/app/page.tsx` and `frontend/app/t/[slug]/page.tsx` using Host or slug fallback
+- [x] T018 [US2] Implement `resolve_tenant` usage and Host-then-slug middleware in `backend/internal/platform/middleware/tenant.go` (host stripped of port; host wins over slug)
+- [x] T019 [US2] Implement tenant handlers returning `TenantPublic` in `backend/internal/tenant/http.go` for `/v1/tenants/current` and `/v1/tenants/current/by-slug/{slug}`
+- [x] T020 [US2] Add idempotent seed of demo-a (`demo-a.localhost`) and demo-b (`demo-b.localhost`) with COP/IVA/`America/Bogota` in `backend/migrations/`
+- [x] T021 [US2] Show current commerce name on `frontend/app/page.tsx` and `frontend/app/t/[slug]/page.tsx` using Host or slug fallback
 
 **Checkpoint**: Quickstart secciones comercio por host, id inventado, fallback slug
 
@@ -103,9 +103,9 @@ description: "Task list for 001-monolith-scaffold"
 
 ### Implementation for User Story 3
 
-- [ ] T022 [P] [US3] Confirm stub modules remain empty of business logic and add a one-line README in `backend/internal/auth/README.md`, `backend/internal/catalog/README.md`, `backend/internal/cart/README.md`, `backend/internal/orders/README.md`, `backend/internal/payments/README.md`, `backend/internal/agent/README.md`, `backend/internal/channel/README.md` stating not in this feature
-- [ ] T023 [US3] Keep `backend/cmd/worker/main.go` as a documented no-op (not started by `docker-compose.yml`)
-- [ ] T024 [US3] Assert API has no order/cart/payment/agent routes (test in `backend/internal/platform/http/no_domain_routes_test.go`)
+- [x] T022 [P] [US3] Confirm stub modules remain empty of business logic and add a one-line README in `backend/internal/auth/README.md`, `backend/internal/catalog/README.md`, `backend/internal/cart/README.md`, `backend/internal/orders/README.md`, `backend/internal/payments/README.md`, `backend/internal/agent/README.md`, `backend/internal/channel/README.md` stating not in this feature
+- [x] T023 [US3] Keep `backend/cmd/worker/main.go` as a documented no-op (not started by `docker-compose.yml`)
+- [x] T024 [US3] Assert API has no order/cart/payment/agent routes (test in `backend/internal/platform/http/no_domain_routes_test.go`)
 
 **Checkpoint**: Revisor señala cada módulo; pedido no es usable
 

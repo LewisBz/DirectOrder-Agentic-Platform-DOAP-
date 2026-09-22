@@ -24,5 +24,6 @@ GRANT ${POSTGRES_OWNER_USER} TO ${POSTGRES_USER};
 SQL
 
 psql -v ON_ERROR_STOP=1 -h "${POSTGRES_HOST}" -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" -f /migrations/schema.sql
+psql -v ON_ERROR_STOP=1 -h "${POSTGRES_HOST}" -U "${POSTGRES_USER}" -d "${POSTGRES_DB}" -f /migrations/seed.sql
 
 echo "atlas sql applied"
