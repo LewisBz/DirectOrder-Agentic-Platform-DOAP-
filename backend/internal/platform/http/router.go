@@ -7,12 +7,13 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
+	"github.com/LewisBz/DirectOrder-Agentic-Platform-DOAP-/internal/auth"
 	"github.com/LewisBz/DirectOrder-Agentic-Platform-DOAP-/internal/platform/database"
 	platmw "github.com/LewisBz/DirectOrder-Agentic-Platform-DOAP-/internal/platform/middleware"
 	"github.com/LewisBz/DirectOrder-Agentic-Platform-DOAP-/internal/tenant"
 )
 
-func NewRouter(db *database.DB, tenants tenant.Resolver) http.Handler {
+func NewRouter(db *database.DB, tenants tenant.Resolver, jwtSecret string) http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
@@ -20,8 +21,27 @@ func NewRouter(db *database.DB, tenants tenant.Resolver) http.Handler {
 	r.Use(platmw.IgnoreClientTenantID)
 	r.Get("/healthz", Healthz())
 	r.Get("/readyz", Readyz(db))
+	r.Get("/openapi.yaml", OpenAPISpec())
+	r.Get("/docs", SwaggerUI())
+	r.Get("/docs/", SwaggerUI())
+	r.Get("/swagger", SwaggerUI())
 	r.Get("/v1/tenants/current", tenant.GetCurrent(tenants))
 	r.Get("/v1/tenants/current/by-slug/{slug}", tenant.GetBySlug(tenants))
+
+	authSvc := auth.NewService(auth.NewStore(db), tenants, jwtSecret)
+	r.Post("/v1/auth/login", auth.Login(authSvc))
+	r.Post("/v1/auth/refresh", auth.Refresh(authSvc))
+	r.Post("/v1/guest/sessions", auth.EnsureGuest(authSvc))
+	r.Group(func(gr chi.Router) {
+		gr.Use(platmw.RequireStaff(jwtSecret, auth.LookupTenantID(tenants)))
+		gr.Post("/v1/auth/logout", auth.Logout(authSvc))
+		gr.Get("/v1/auth/me", auth.Me(authSvc))
+		gr.Get("/v1/staff", auth.ListStaff(authSvc))
+		gr.Post("/v1/staff", auth.CreateStaff(authSvc))
+		gr.Patch("/v1/staff/{id}", auth.PatchStaff(authSvc))
+		gr.Post("/v1/staff/{id}/deactivate", auth.DeactivateStaff(authSvc))
+		gr.Post("/v1/staff/{id}/reactivate", auth.ReactivateStaff(authSvc))
+	})
 	return r
 }
 

@@ -27,6 +27,18 @@ curl.exe http://localhost:8080/v1/tenants/current/by-slug/demo-a
 
 Los dos current deben devolver Demo A. Si el slug sigue en `tenant_not_found`, `resolve_tenant` aún no tiene `row_security = off`.
 
+## Swagger (prueba manual)
+
+Abre [http://localhost:8080/docs](http://localhost:8080/docs). Contrato: [http://localhost:8080/openapi.yaml](http://localhost:8080/openapi.yaml).
+
+1. `GET /healthz` y `GET /readyz` → `ok`
+2. `GET /v1/tenants/current` (deja el `X-Forwarded-Host` en `demo-a.localhost` o el interceptor lo pone)
+3. `POST /v1/auth/login` con `owner@demo-a.local` / `changeme_staff`
+4. Authorize (Bearer) con `access_token`
+5. `GET /v1/auth/me`, `GET /v1/staff`, `POST /v1/guest/sessions`
+
+El navegador no envía `Host` inventado; usa `X-Forwarded-Host`. Para Demo B, cámbialo a `demo-b.localhost` (el Bearer de A debe dar 401).
+
 ## Login y saludo (US1)
 
 Credenciales semilla: `owner@demo-a.local` / valor de `STAFF_SEED_PASSWORD` (ejemplo `changeme_staff`).

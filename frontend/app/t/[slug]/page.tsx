@@ -1,4 +1,5 @@
 import { apiBaseURL } from "@/lib/api";
+import { EnsureGuest } from "@/app/ensure-guest";
 
 const apiURL = apiBaseURL();
 
@@ -31,9 +32,15 @@ export default async function TenantSlugPage({
   const tenant: TenantPublic = await res.json();
   return (
     <main className="mx-auto max-w-xl p-8">
+      <EnsureGuest slug={tenant.slug} />
       <h1 className="text-2xl font-semibold">{tenant.name}</h1>
       <p className="mt-2 text-zinc-600">
         {tenant.slug} · {tenant.host} · {tenant.currency} · {tenant.tax_name} · {tenant.timezone}
+      </p>
+      <p className="mt-4">
+        <a className="underline" href={`/t/${tenant.slug}/login`}>
+          Acceso del equipo
+        </a>
       </p>
     </main>
   );

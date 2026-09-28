@@ -35,30 +35,53 @@ CREATE POLICY tenants_isolation ON tenants
     USING (id = NULLIF(current_setting('app.tenant_id', true), '')::uuid)
     WITH CHECK (id = NULLIF(current_setting('app.tenant_id', true), '')::uuid);
 
+-- FORCE RLS also binds the table owner. This SELECT-only policy lets
+-- SECURITY DEFINER resolve_tenant see rows without BYPASSRLS on the role.
+DROP POLICY IF EXISTS tenants_owner_lookup ON tenants;
+CREATE POLICY tenants_owner_lookup ON tenants
+    FOR SELECT
+    TO doap_owner
+    USING (true);
+
 DROP POLICY IF EXISTS isolation_canaries_isolation ON isolation_canaries;
 CREATE POLICY isolation_canaries_isolation ON isolation_canaries
     USING (tenant_id = NULLIF(current_setting('app.tenant_id', true), '')::uuid)
     WITH CHECK (tenant_id = NULLIF(current_setting('app.tenant_id', true), '')::uuid);
 
-CREATE OR REPLACE FUNCTION resolve_tenant(p_host text, p_slug text)
-RETURNS SETOF tenants
+DROP FUNCTION IF EXISTS resolve_tenant(text, text);
+CREATE FUNCTION resolve_tenant(p_host text, p_slug text)
+RETURNS TABLE (
+    id uuid,
+    slug text,
+    host text,
+    name text,
+    currency character(3),
+    tax_name text,
+    timezone text,
+    opening_hours jsonb,
+    created_at timestamptz,
+    updated_at timestamptz
+)
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
-SET row_security = off
 AS $$
 DECLARE
     h text := nullif(lower(split_part(btrim(coalesce(p_host, '')), ':', 1)), '');
     s text := nullif(lower(btrim(coalesce(p_slug, ''))), '');
 BEGIN
     IF h IS NOT NULL THEN
-        RETURN QUERY SELECT * FROM tenants WHERE host = h;
+        RETURN QUERY
+        SELECT t.id, t.slug, t.host, t.name, t.currency, t.tax_name, t.timezone, t.opening_hours, t.created_at, t.updated_at
+        FROM tenants t WHERE t.host = h;
         IF FOUND THEN
             RETURN;
         END IF;
     END IF;
     IF s IS NOT NULL THEN
-        RETURN QUERY SELECT * FROM tenants WHERE slug = s;
+        RETURN QUERY
+        SELECT t.id, t.slug, t.host, t.name, t.currency, t.tax_name, t.timezone, t.opening_hours, t.created_at, t.updated_at
+        FROM tenants t WHERE t.slug = s;
     END IF;
 END;
 $$;

@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { apiBaseURL } from "@/lib/api";
+import { EnsureGuest } from "./ensure-guest";
 
 const apiURL = apiBaseURL();
 
@@ -28,6 +29,7 @@ export default async function HomePage() {
 
   return (
     <main className="mx-auto max-w-xl p-8">
+      {tenant ? <EnsureGuest host={host} /> : null}
       <h1 className="text-2xl font-semibold">DOAP</h1>
       {tenant ? (
         <p className="mt-4">

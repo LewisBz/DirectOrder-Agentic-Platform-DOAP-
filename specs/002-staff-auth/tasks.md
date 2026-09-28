@@ -62,18 +62,18 @@ description: "Task list for 002-staff-auth"
 
 ### Tests for User Story 1
 
-- [ ] T013 [P] [US1] Write failing contract tests for `POST /v1/auth/login`, `POST /v1/auth/refresh`, `POST /v1/auth/logout`, `GET /v1/auth/me` in `backend/internal/auth/login_contract_test.go` against [contracts/openapi.yaml](./contracts/openapi.yaml)
-- [ ] T014 [P] [US1] Write failing unit tests for bcrypt cost 12 and refresh rotation in `backend/internal/auth/tokens_test.go`
+- [x] T013 [P] [US1] Write failing contract tests for `POST /v1/auth/login`, `POST /v1/auth/refresh`, `POST /v1/auth/logout`, `GET /v1/auth/me` in `backend/internal/auth/login_contract_test.go` against [contracts/openapi.yaml](./contracts/openapi.yaml)
+- [x] T014 [P] [US1] Write failing unit tests for bcrypt cost 12 and refresh rotation in `backend/internal/auth/tokens_test.go`
 
 ### Implementation for User Story 1
 
-- [ ] T015 [US1] Implement staff lookup + bcrypt verify in `backend/internal/auth/store.go` (after `resolve_tenant` + `SET LOCAL`)
-- [ ] T016 [US1] Implement access JWT (15m) and rotating hashed refresh (7d) in `backend/internal/auth/tokens.go`
-- [ ] T017 [US1] Implement login, refresh, logout, me handlers in `backend/internal/auth/http.go`
-- [ ] T018 [US1] Mount auth routes on the chi router in `backend/internal/platform/http/router.go`
-- [ ] T019 [US1] Add Next route handlers that set httpOnly cookies from the API token pair in `frontend/app/api/auth/login/route.ts`, `frontend/app/api/auth/refresh/route.ts`, and `frontend/app/api/auth/logout/route.ts`
-- [ ] T020 [P] [US1] Add login screen in `frontend/app/t/[slug]/login/page.tsx`
-- [ ] T021 [US1] Add post-login hello screen (name, role, tenant) in `frontend/app/t/[slug]/hello/page.tsx` using `frontend/lib/api.ts`
+- [x] T015 [US1] Implement staff lookup + bcrypt verify in `backend/internal/auth/store.go` (after `resolve_tenant` + `SET LOCAL`)
+- [x] T016 [US1] Implement access JWT (15m) and rotating hashed refresh (7d) in `backend/internal/auth/tokens.go`
+- [x] T017 [US1] Implement login, refresh, logout, me handlers in `backend/internal/auth/http.go`
+- [x] T018 [US1] Mount auth routes on the chi router in `backend/internal/platform/http/router.go`
+- [x] T019 [US1] Add Next route handlers that set httpOnly cookies from the API token pair in `frontend/app/api/auth/login/route.ts`, `frontend/app/api/auth/refresh/route.ts`, and `frontend/app/api/auth/logout/route.ts`
+- [x] T020 [P] [US1] Add login screen in `frontend/app/t/[slug]/login/page.tsx`
+- [x] T021 [US1] Add post-login hello screen (name, role, tenant) in `frontend/app/t/[slug]/hello/page.tsx` using `frontend/lib/api.ts`
 
 **Checkpoint**: Quickstart sección Login y saludo. MVP demostrable.
 
@@ -87,14 +87,14 @@ description: "Task list for 002-staff-auth"
 
 ### Tests for User Story 2
 
-- [ ] T022 [P] [US2] Write failing contract tests for `GET/POST /v1/staff`, `PATCH /v1/staff/{id}`, deactivate/reactivate in `backend/internal/auth/staff_contract_test.go`
+- [x] T022 [P] [US2] Write failing contract tests for `GET/POST /v1/staff`, `PATCH /v1/staff/{id}`, deactivate/reactivate in `backend/internal/auth/staff_contract_test.go`
 
 ### Implementation for User Story 2
 
-- [ ] T023 [US2] Implement staff list/create/patch/deactivate/reactivate (unique email, bcrypt on create/optional patch, revoke refresh) in `backend/internal/auth/store.go`
-- [ ] T024 [US2] Implement staff HTTP handlers and owner-only guard in `backend/internal/auth/http.go` and register in `backend/internal/platform/http/router.go`
-- [ ] T025 [US2] Reject `role=owner` on create/patch and reject deactivate of owner in `backend/internal/auth/store.go`
-- [ ] T026 [US2] Add staff CRUD screen in `frontend/app/t/[slug]/staff/page.tsx`
+- [x] T023 [US2] Implement staff list/create/patch/deactivate/reactivate (unique email, bcrypt on create/optional patch, revoke refresh) in `backend/internal/auth/store.go`
+- [x] T024 [US2] Implement staff HTTP handlers and owner-only guard in `backend/internal/auth/http.go` and register in `backend/internal/platform/http/router.go`
+- [x] T025 [US2] Reject `role=owner` on create/patch and reject deactivate of owner in `backend/internal/auth/store.go`
+- [x] T026 [US2] Add staff CRUD screen in `frontend/app/t/[slug]/staff/page.tsx`
 
 **Checkpoint**: Quickstart sección CRUD.
 
@@ -108,13 +108,13 @@ description: "Task list for 002-staff-auth"
 
 ### Tests for User Story 3
 
-- [ ] T027 [P] [US3] Write failing isolation tests (A cannot SELECT/UPDATE staff of B; no `app.tenant_id` → 0 rows) in `backend/internal/auth/isolation_test.go`
-- [ ] T028 [P] [US3] Write failing test JWT of A on Host B returns 401 in `backend/internal/auth/host_mismatch_test.go`
+- [x] T027 [P] [US3] Write failing isolation tests (A cannot SELECT/UPDATE staff of B; no `app.tenant_id` → 0 rows) in `backend/internal/auth/isolation_test.go`
+- [x] T028 [P] [US3] Write failing test JWT of A on Host B returns 401 in `backend/internal/auth/host_mismatch_test.go`
 
 ### Implementation for User Story 3
 
-- [ ] T029 [US3] Ensure every staff/refresh query runs inside `WithTenantTx` in `backend/internal/auth/store.go` and middleware in `backend/internal/platform/middleware/staff_jwt.go`
-- [ ] T030 [US3] Confirm `X-Tenant-Id` is still stripped in `backend/internal/platform/middleware/tenant.go` for auth routes
+- [x] T029 [US3] Ensure every staff/refresh query runs inside `WithTenantTx` in `backend/internal/auth/store.go` and middleware in `backend/internal/platform/middleware/staff_jwt.go`
+- [x] T030 [US3] Confirm `X-Tenant-Id` is still stripped in `backend/internal/platform/middleware/tenant.go` for auth routes
 
 **Checkpoint**: SC-003. Isolation tests green with Compose Postgres.
 
@@ -128,13 +128,13 @@ description: "Task list for 002-staff-auth"
 
 ### Tests for User Story 4
 
-- [ ] T031 [P] [US4] Write failing contract tests for `POST /v1/guest/sessions` (reuse same tenant, new token other tenant, 404 unknown host) in `backend/internal/auth/guest_contract_test.go`
+- [x] T031 [P] [US4] Write failing contract tests for `POST /v1/guest/sessions` (reuse same tenant, new token other tenant, 404 unknown host) in `backend/internal/auth/guest_contract_test.go`
 
 ### Implementation for User Story 4
 
-- [ ] T032 [US4] Implement guest ensure/reuse hashed token in `backend/internal/auth/guest.go` and handler in `backend/internal/auth/http.go`
-- [ ] T033 [US4] Call guest ensure from the storefront in `frontend/app/t/[slug]/page.tsx` and `frontend/app/page.tsx` via `frontend/app/api/auth/guest/route.ts`
-- [ ] T034 [US4] Block guest cookies from `frontend/app/t/[slug]/hello/page.tsx` and `frontend/app/t/[slug]/staff/page.tsx` (redirect to login)
+- [x] T032 [US4] Implement guest ensure/reuse hashed token in `backend/internal/auth/guest.go` and handler in `backend/internal/auth/http.go`
+- [x] T033 [US4] Call guest ensure from the storefront in `frontend/app/t/[slug]/page.tsx` and `frontend/app/page.tsx` via `frontend/app/api/auth/guest/route.ts`
+- [x] T034 [US4] Block guest cookies from `frontend/app/t/[slug]/hello/page.tsx` and `frontend/app/t/[slug]/staff/page.tsx` (redirect to login)
 
 **Checkpoint**: Quickstart sección Invitado. SC-006.
 
@@ -144,10 +144,10 @@ description: "Task list for 002-staff-auth"
 
 **Purpose**: Docs, lints, quickstart e2e
 
-- [ ] T035 [P] Align root `README.md` with [quickstart.md](./quickstart.md) (seed owners, `/t/demo-a/login`)
-- [ ] T036 [P] Document staff/guest RLS template in `backend/migrations/README.md`
-- [ ] T037 Run `go test ./...` in `backend/` and `npx tsc --noEmit` in `frontend/`
-- [ ] T038 Execute [quickstart.md](./quickstart.md) on Compose (`down -v` + up) and fix gaps
+- [x] T035 [P] Align root `README.md` with [quickstart.md](./quickstart.md) (seed owners, `/t/demo-a/login`)
+- [x] T036 [P] Document staff/guest RLS template in `backend/migrations/README.md`
+- [x] T037 Run `go test ./...` in `backend/` and `npx tsc --noEmit` in `frontend/`
+- [x] T038 Execute [quickstart.md](./quickstart.md) on Compose (`down -v` + up) and fix gaps
 
 ---
 

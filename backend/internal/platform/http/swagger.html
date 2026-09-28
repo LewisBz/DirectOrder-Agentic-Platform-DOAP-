@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>DOAP API</title>
+    <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5.17.14/swagger-ui.css" />
+  </head>
+  <body>
+    <div id="swagger-ui"></div>
+    <script src="https://unpkg.com/swagger-ui-dist@5.17.14/swagger-ui-bundle.js"></script>
+    <script>
+      window.onload = function () {
+        window.ui = SwaggerUIBundle({
+          url: "/openapi.yaml",
+          dom_id: "#swagger-ui",
+          persistAuthorization: true,
+          tryItOutEnabled: true,
+          requestInterceptor: function (req) {
+            req.headers = req.headers || {};
+            if (!req.headers["X-Forwarded-Host"] && !req.headers["x-forwarded-host"]) {
+              req.headers["X-Forwarded-Host"] = "demo-a.localhost";
+            }
+            return req;
+          },
+        });
+      };
+    </script>
+  </body>
+</html>

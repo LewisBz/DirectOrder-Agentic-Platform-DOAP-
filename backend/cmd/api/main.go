@@ -32,7 +32,7 @@ func main() {
 
 	srv := &http.Server{
 		Addr:              cfg.APIAddr,
-		Handler:           plathttp.NewRouter(db, tenant.NewStore(db)),
+		Handler:           plathttp.NewRouter(db, tenant.NewStore(db), cfg.AuthJWTSecret),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 

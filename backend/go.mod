@@ -1,6 +1,6 @@
 module github.com/LewisBz/DirectOrder-Agentic-Platform-DOAP-
 
-go 1.24.0
+go 1.26.0
 
 require (
 	entgo.io/ent v0.14.5

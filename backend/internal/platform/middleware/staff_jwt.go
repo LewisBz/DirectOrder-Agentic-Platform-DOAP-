@@ -15,9 +15,10 @@ type staffCtxKey int
 const staffClaimsKey staffCtxKey = 1
 
 type StaffClaims struct {
-	StaffID  uuid.UUID `json:"sub_uuid"`
+	StaffID  uuid.UUID `json:"-"`
 	TenantID uuid.UUID `json:"tenant_id"`
 	Role     string    `json:"role"`
+	Typ      string    `json:"typ"`
 	jwt.RegisteredClaims
 }
 
@@ -35,8 +36,8 @@ func StaffFromContext(ctx context.Context) (StaffClaims, bool) {
 	return c, ok
 }
 
-// RequireStaff parses Bearer HS256 access JWT. lookupTenant returns the commerce id for RequestHost.
-// jwt.tenant_id must equal that id.
+// RequireStaff parses Bearer HS256 access JWT. lookupTenant returns the commerce id for RequestHost
+// (never X-Tenant-Id). jwt.tenant_id must equal that id.
 func RequireStaff(secret string, lookupTenant func(*http.Request) (uuid.UUID, error)) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -55,6 +56,10 @@ func RequireStaff(secret string, lookupTenant func(*http.Request) (uuid.UUID, er
 				return []byte(secret), nil
 			})
 			if err != nil || !tok.Valid {
+				writeAuthJSON(w, http.StatusUnauthorized, "invalid_credentials", "authentication required")
+				return
+			}
+			if claims.Typ != "" && claims.Typ != "access" {
 				writeAuthJSON(w, http.StatusUnauthorized, "invalid_credentials", "authentication required")
 				return
 			}

@@ -1,3 +1,4 @@
+# Copied from specs/002-staff-auth/contracts/openapi.yaml for go:embed /docs.
 openapi: 3.1.0
 info:
   title: DOAP API — auth
